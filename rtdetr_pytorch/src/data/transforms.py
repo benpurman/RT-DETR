@@ -26,9 +26,9 @@ RandomZoomOut = register(T.RandomZoomOut)
 # RandomIoUCrop = register(T.RandomIoUCrop)
 RandomHorizontalFlip = register(T.RandomHorizontalFlip)
 Resize = register(T.Resize)
-ToImageTensor = register(T.ToImageTensor)
-ConvertDtype = register(T.ConvertDtype)
-SanitizeBoundingBox = register(T.SanitizeBoundingBox)
+ToImage = register(T.ToImage)
+ToDtype = register(T.ToDtype)
+SanitizeBoundingBoxes = register(T.SanitizeBoundingBoxes)
 RandomCrop = register(T.RandomCrop)
 Normalize = register(T.Normalize)
 
@@ -42,7 +42,22 @@ class Compose(T.Compose):
             for op in ops:
                 if isinstance(op, dict):
                     name = op.pop('type')
-                    transfom = getattr(GLOBAL_CONFIG[name]['_pymodule'], name)(**op)
+                    if name == 'ToDtype':
+                        import torch
+                        # Use .get() to avoid KeyError, default to float32 if missing
+                        d_type = op.pop('dtype', torch.float32) 
+                        
+                        if isinstance(d_type, str):
+                            # Handle strings like 'torch.float32' or 'float32'
+                            if d_type.startswith('torch.'):
+                                d_type = getattr(torch, d_type.split('.')[-1])
+                            else:
+                                d_type = getattr(torch, d_type)
+                        
+                        transfom = getattr(GLOBAL_CONFIG[name]['_pymodule'], name)(d_type, **op)
+                    else:
+                        # For all other transforms, proceed as normal
+                        transfom = getattr(GLOBAL_CONFIG[name]['_pymodule'], name)(**op)
                     transforms.append(transfom)
                     # op['type'] = name
                 elif isinstance(op, nn.Module):

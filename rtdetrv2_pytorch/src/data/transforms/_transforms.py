@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Optional
 
 from .._misc import convert_to_tv_tensor, _boxes_keys
 from .._misc import Image, Video, Mask, BoundingBoxes
-from .._misc import SanitizeBoundingBoxes
+from .._misc import SanitizeBoundingBoxeses
 
 from ...core import register
 
@@ -26,10 +26,10 @@ RandomPhotometricDistort = register()(T.RandomPhotometricDistort)
 RandomZoomOut = register()(T.RandomZoomOut)
 RandomHorizontalFlip = register()(T.RandomHorizontalFlip)
 Resize = register()(T.Resize)
-# ToImageTensor = register()(T.ToImageTensor)
-# ConvertDtype = register()(T.ConvertDtype)
+# ToImage = register()(T.ToImage)
+# ToDtype = register()(T.ToDtype)
 # PILToTensor = register()(T.PILToTensor)
-SanitizeBoundingBoxes = register(name='SanitizeBoundingBoxes')(SanitizeBoundingBoxes)
+SanitizeBoundingBoxeses = register(name='SanitizeBoundingBoxeses')(SanitizeBoundingBoxeses)
 RandomCrop = register()(T.RandomCrop)
 Normalize = register()(T.Normalize)
 
